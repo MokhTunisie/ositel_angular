@@ -1,0 +1,96 @@
+<h1 class="page-header">Statistiques</h1>
+<div class="row">
+  <div class="col-lg-12">
+    <form method="get" (submit)="getMounthlyTransactions($event)">
+      <div class="form-group">
+        <div class="col-sm-5">
+          <select id="year" class="form-control" name="year">
+            <option *ngFor="let year of years" [selected]="year === selectedYear" [value]="year">{{year}}</option>
+          </select>
+        </div>
+        <div class="col-sm-5">
+          <select id="month" class="form-control" name="month">
+            <option *ngFor="let month of months" [selected]="month.num == selectedMonth" value="{{month.num}}">{{month.label}}</option>
+          </select>
+        </div>
+        <div class="col-sm-2">
+          <button type="submit" id="submitMonth" class="btn btn-primary">Valider</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<br/>
+
+<div class="responsive-table-line" id="transactionsTable">
+  <table class="records_list table table-bordered table-condensed table-striped">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Titre</th>
+      <th>Description</th>
+      <th>Categorie</th>
+      <th>Montant</th>
+      <th>Type</th>
+      <th>Valid</th>
+      <th>Tags</th>
+      <th>Créé le</th>
+      <th>Modifié le</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let transaction of transactions">
+      <td data-title="ID">{{ transaction.id }}</td>
+      <td data-title="Titre">{{ transaction.title }}</td>
+      <td data-title="Description">{{ transaction.description }}</td>
+      <td data-title="Categorie">{{ transaction.category.title }}</td>
+      <td data-title="Montant">{{ transaction.amount }}</td>
+      <td data-title="Type">
+        <i
+          ngClass="{{ transaction.isInput ? 'glyphicon glyphicon-check text-success' : 'glyphicon glyphicon-unchecked text-danger' }}"></i>
+      </td>
+      <td data-title="Valide">
+        <i
+          ngClass="{{ transaction.isValid ? 'glyphicon glyphicon-check text-success' : 'glyphicon glyphicon-unchecked text-danger' }}"></i>
+      </td>
+      <td data-title="Tags">
+        <small *ngFor="let tag of transaction.tags; let l = last">{{ tag.name }}{{ l ? '' : ',' }}</small>
+      </td>
+      <td data-title="Créé le">{{ transaction.createdAt ? (transaction.createdAt|date:'dd/MM/yyyy HH:mm:ss':'GMT') : '' }}</td>
+      <td data-title="Modifié le">{{ transaction.updatedAt ? (transaction.updatedAt|date:'dd/MM/yyyy HH:mm:ss':'GMT') : '' }}</td>
+    </tr>
+
+    </tbody>
+  </table>
+    <nav aria-label="Page navigation">
+      <ul class="pagination">
+        <li class="pagination-previous" [class.disabled]="page === 1">
+          <a href="javascript:;" *ngIf="page !== 1" (click)="paginate(page-1)" aria-label="Previous"> <span
+            aria-hidden="true">&laquo;</span> </a>
+        </li>
+
+
+        <li *ngFor="let item of pages" [class.current]="item === page">
+          <a href="javascript:;" (click)="paginate(item)" *ngIf="item !== page">
+            <span>{{ item }}</span>
+          </a>
+          <a href="javascript:;" *ngIf="item === page" class="disabled">
+            <span>{{ item }}</span>
+          </a>
+        </li>
+
+        <li class="pagination-next" [class.disabled]="page === pages.length">
+          <a href="javascript:;" *ngIf="page !== pages.length" (click)="paginate(page+1)" aria-label="Next"> <span aria-hidden="true">&raquo;</span> </a>
+        </li>
+      </ul>
+    </nav>
+
+  <div class="row">
+    <div class="col-sm-6"><b>Total entrées :</b> {{ monthlyTotal['input'] }} &euro;</div>
+    <div class="col-sm-6"><b>Trésorerie début :</b> {{ monthlyTreasury['start'] }} &euro;</div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6"><b>Total sorties :</b> {{  monthlyTotal['output'] }} &euro;</div>
+    <div class="col-sm-6"><b>Trésorerie fin :</b> {{  monthlyTreasury['end'] }} &euro;</div>
+  </div>
+</div>
